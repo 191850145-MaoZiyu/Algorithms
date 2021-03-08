@@ -2,12 +2,12 @@
 using namespace std;
 struct Edge {
     int v, flow, C, rev;
-    Edge (int _v, int _flow, int _C, int _rev)
+    Edge (int v, int flow, int C, int rev)
     {
-        v    = _v;
-        flow = _flow;
-        C    = _C;
-        rev  = _rev;
+        this->v    = v;
+        this->flow = flow;
+        this->C    = C;
+        this->rev  = rev;
     }
 };
 class Graph

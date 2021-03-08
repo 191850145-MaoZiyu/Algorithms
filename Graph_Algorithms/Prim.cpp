@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 struct Node {
-    int id, cost;
-    Node (int _id, int _cost)
+    int to, cost;
+    Node (int to, int cost)
     {
-        id = _id;
-        cost = _cost;
+        this->to = to;
+        this->cost = cost;
     }
     bool operator>(const Node& node) const
     {
@@ -35,7 +35,7 @@ public:
     void Prim_updateedges(int x)
     {
         for (auto & i : edges[x])
-            if (!visited[i.id])
+            if (!visited[i.to])
                 Prim_edges.push(i);
     }
     int  Prim            (void)
@@ -47,15 +47,15 @@ public:
         while (!Prim_edges.empty())
         {
             Node Top = Prim_edges.top();
-            if (visited[Top.id])
+            if (visited[Top.to])
             {
                 Prim_edges.pop();
                 continue;
             }
             Prim_ans += Top.cost;
-            visited[Top.id] = 1;
+            visited[Top.to] = 1;
             Prim_edges.pop();
-            Prim_updateedges(Top.id);
+            Prim_updateedges(Top.to);
         }
         return Prim_ans;
     }

@@ -72,21 +72,21 @@ public:
 };
 int main(void)
 {
-	freopen("data.in", "r", stdin);
-	int n, m;                   // n 个结点，m 个不等式
-	cin >> n >> m;
-	Graph g(n + 1);             // 需要添加超级源点，不妨设为 0，所以建一个 n + 1 个结点的图
-	while (m--)
-	{
+    freopen("data.in", "r", stdin);
+    int n, m;                   // n 个结点，m 个不等式
+    cin >> n >> m;
+    Graph g(n + 1);             // 需要添加超级源点，不妨设为 0，所以建一个 n + 1 个结点的图
+    while (m--)
+    {
         int a, b, c;            // 不等式 a - b <= c，建一条由 b 指向 a，权值为 c 的边
         // u - v >  w ==> u - v >= w - 1 ==> v - u <= 1 - w     g.DC_addedge(u, v, 1 - w);
         // u - v >= w ==> v - u <= -w                           g.DC_addedge(u, v, -w);
         // u - v <  w ==> u - v <= w - 1                        g.DC_addedge(v, u, w - 1);
         // u - v <= w                                           g.DC_addedge(v, u, w);
         g.DC_addedge(b, a, c);
-	}
-	g.add_super_source();
+    }
+    g.add_super_source();
     g.SPFA(0);
     cout << g.DC_ans() << endl;
-	return 0;
+    return 0;
 }
