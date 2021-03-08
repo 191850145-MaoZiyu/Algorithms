@@ -49,6 +49,7 @@ public:
                 return;
             }
         }
+        
         for (int i = 1; i <= n; i++)
             cout << a[i][n + 1] << endl;
     }

@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 struct Node {
-    int id, cost;
-    Node (int _id, int _cost)
+    int to, cost;
+    Node (int to, int cost)
     {
-        id = _id;
-        cost = _cost;
+        this->to = to;
+        this->cost = cost;
     }
     bool operator>(const Node& node) const
     {
@@ -44,13 +44,13 @@ public:
         {
             Node Top = edge.top();
             edge.pop();
-            if (visited[Top.id])
+            if (visited[Top.to])
                 continue;
-            visited[Top.id] = 1;
-            for (auto& k : edges[Top.id])
+            visited[Top.to] = 1;
+            for (auto& k : edges[Top.to])
             {
-                Dijkstra_ans[k.id] = min(Dijkstra_ans[k.id], Top.cost + k.cost);
-                edge.push(Node(k.id, Dijkstra_ans[k.id]));
+                Dijkstra_ans[k.to] = min(Dijkstra_ans[k.to], Top.cost + k.cost);
+                edge.push(Node(k.to, Dijkstra_ans[k.to]));
             }
         }
     }

@@ -99,6 +99,6 @@ int main(void)
         cin >> u >> v >> c;
         g.Dinic_addedge(u, v, c);
     }
-    cout << g.Dinic_maxflow(S, T);
+    cout << g.Dinic_maxflow(S, T) << endl;
     return 0;
 }

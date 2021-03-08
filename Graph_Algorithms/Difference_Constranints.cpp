@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+using namespace std;
+struct Node {
+    int to, cost;
+    Node (int to, int cost)
+    {
+        this->to = to;
+        this->cost = cost;
+    }
+};
+class Graph
+{
+    int V;
+    vector<Node> *edges;
+    int *visited;
+public:
+    int *DC_dist;
+    Graph(int V)
+    {
+        this->V = V;
+        edges   = new vector<Node>[V];
+        visited = new int[V];
+        DC_dist 	= new int[V];
+    }
+    #define DC_addedge(u, v, w) addedge(u, v, w, true)
+    void addedge (int u, int v, int w, bool is_directed)
+    {
+        edges[u].push_back(Node(v, w));
+        if (!is_directed)
+            edges[v].push_back(Node(u, w));
+    }
+    void add_super_source(void)
+    {
+        for (int i = 1; i < V; i++)
+            DC_addedge(0, i, 0);
+    }
+    void SPFA(int src)
+    {
+		memset(DC_dist, 0x3f, sizeof(int) * V);
+		memset(visited, 0, sizeof(int) * V);
+		visited[src] = 1;
+		DC_dist[src] = 0;
+		queue<int> q;
+		q.push(src);
+		while (!q.empty()) 
+		{
+			int from = q.front(); 
+			q.pop();
+			visited[from] = 0;
+			for (auto & edge : edges[from])
+			{
+				int to = edge.to, cost = edge.cost;
+				if (DC_dist[to] > DC_dist[from] + cost)
+				{
+					DC_dist[to] = DC_dist[from] + cost;
+					if (!visited[to])
+					{
+						visited[to] = 1;
+						q.push(to);
+					}
+				}
+			}
+		}
+    }
+    int DC_ans(void)
+    {
+        int ans = 0x7f7f7f7f;
+        for (int i = 1; i < V; i++)
+            ans = min(ans, DC_dist[i]);
+        return -ans;            // 返回负的 ans
+    }
+};
+int main(void)
+{
+	freopen("data.in", "r", stdin);
+	int n, m;                   // n 个结点，m 个不等式
+	cin >> n >> m;
+	Graph g(n + 1);             // 需要添加超级源点，不妨设为 0，所以建一个 n + 1 个结点的图
+	while (m--)
+	{
+        int a, b, c;            // 不等式 a - b <= c，建一条由 b 指向 a，权值为 c 的边
+        // u - v >  w ==> u - v >= w - 1 ==> v - u <= 1 - w     g.DC_addedge(u, v, 1 - w);
+        // u - v >= w ==> v - u <= -w                           g.DC_addedge(u, v, -w);
+        // u - v <  w ==> u - v <= w - 1                        g.DC_addedge(v, u, w - 1);
+        // u - v <= w                                           g.DC_addedge(v, u, w);
+        g.DC_addedge(b, a, c);
+	}
+	g.add_super_source();
+    g.SPFA(0);
+    cout << g.DC_ans() << endl;
+	return 0;
+}
