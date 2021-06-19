@@ -1,41 +1,60 @@
 #include <bits/stdc++.h>
 using namespace std;
-class Graph
-{
+class Graph {
     int V;
 public:
-    int **adj_matrix;
+	vector<vector<int>> ans;
     Graph(int V)
     {
         this->V = V;
-        adj_matrix        = new int *[V];
+		ans.resize(V);
         for (int i = 0; i < V; i++)
         {
-            adj_matrix[i] = new int[V];
-            memset(adj_matrix[i], 0x3f, sizeof(int) * V);
-            adj_matrix[i][i] = 0;
+			ans[i].resize(V);
+			for (int j = 0; j < V; j++)
+				ans[i][j] = 0x3f3f3f3f;
+            ans[i][i] = 0;
         }
+		vector<vector<int>> p;
     }
+	~Graph()
+	{
+		ans.clear();
+		p.clear();
+	}
     #define Floyd_addedge(u, v, w, is_directed) addedge(u, v, w, is_directed)
     void addedge(int u, int v, int w, bool is_directed)
     {
-        adj_matrix[u][v] = w;
+        ans[u][v] = w;
+		p[u][v] = u;
         if (!is_directed)
-            adj_matrix[v][u] = w;
+        {
+			ans[v][u] = w;
+			p[v][u] = v;
+		}
     }
 
-    void Floyd  (void)
+    void Floyd(void)
     {
         for (int k = 0; k < V; k++)
             for (int i = 0; i < V; i++)
                 for (int j = 0; j < V; j++)
-                    adj_matrix[i][j] = min(adj_matrix[i][j], adj_matrix[i][k] + adj_matrix[j][k]);
+				{
+					if (ans[i][j] > ans[i][k] + ans[k][j])
+					{
+//						printf("(%d, %d), (%d, %d) + (%d, %d)\n", i, j, i, k, k, j);
+						ans[i][j] = ans[i][k] + ans[k][j];
+						p[i][j] = k;
+						p[i][k] = i;
+					}					
+				}
     }
 };
 int main(void)
 {
-    // freopen("data.in", "r", stdin);
-    // Floyd 算法例子
+#ifdef __DEBUG__
+    freopen("data.in", "r", stdin);
+#endif
     int N, M;
     cin >> N >> M;
     Graph g(N);
@@ -43,11 +62,11 @@ int main(void)
     {
         int u, v, w;
 	    cin >> u >> v >> w;
-        g.Floyd_addedge(u, v, w, 0); // 无向边
+        g.Floyd_addedge(u, v, w, 1);
     }
     g.Floyd();
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
-            cout << "(" << i << ", " << j << "): " << g.adj_matrix[i][j] << endl;
+            cout << "(" << i << ", " << j << "): " << g.ans[i][j] << endl;
     return 0;
 }

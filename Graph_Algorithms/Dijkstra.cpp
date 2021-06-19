@@ -1,65 +1,61 @@
 #include <bits/stdc++.h>
 using namespace std;
-struct Node {
-    int to, cost;
-    Node (int to, int cost)
-    {
-        this->to = to;
-        this->cost = cost;
-    }
-    bool operator>(const Node& node) const
-    {
-        return this->cost > node.cost;
-    }
-};
+#define Node pair<int, int>
+#define cost first
+#define to   second
 class Graph
 {
     int V;
-    vector<Node> *edges;
-    int *visited;
+    vector<vector<Node>> edges;
+    unordered_set<int>   visited;
+    vector<int>          Dijkstra_ans;
 public:
-    int *Dijkstra_ans;
     Graph(int V)
     {
         this->V = V;
-        edges        = new vector<Node>[V];
-        visited      = new int[V];
-        Dijkstra_ans = new int[V];
+        edges.resize(V);
+        Dijkstra_ans.resize(V);
     }
-    #define Dijkstra_addedge(u, v, w, is_directed) addedge(u, v, w, is_directed)
+	#define Dijkstra_addedge(u, v, w, is_directed) addedge(u, v, w, is_directed)
     void addedge (int u, int v, int w, bool is_directed)
     {
-        edges[u].push_back(Node(v, w));
+		edges[u].push_back({w, v});
         if (!is_directed)
-            edges[v].push_back(Node(u, w));
+			edges[v].push_back({w, u});
     }
     void Dijkstra(int src)
     {
-        memset(visited, 0, sizeof(int) * V);
-        memset(Dijkstra_ans, 0x7f, sizeof(int) * V);
+        visited.clear();
+        for (int i = 0; i < V; i++)
+            Dijkstra_ans[i] = 0x3f3f3f3f;
         Dijkstra_ans[src] = 0;
         priority_queue<Node, vector<Node>, greater<Node>> edge;
-        edge.push(Node(src, 0));
+        edge.push({0, src});
         while (!edge.empty())
         {
             Node Top = edge.top();
             edge.pop();
-            if (visited[Top.to])
+            if (visited.find(Top.to) != visited.end())
                 continue;
-            visited[Top.to] = 1;
+            visited.insert(Top.to);
             for (auto& k : edges[Top.to])
             {
                 Dijkstra_ans[k.to] = min(Dijkstra_ans[k.to], Top.cost + k.cost);
-                edge.push(Node(k.to, Dijkstra_ans[k.to]));
+                edge.push({Dijkstra_ans[k.to], k.to});
             }
         }
+    }
+    int get_ans(int des)
+    {
+        return Dijkstra_ans[des];
     }
 };
 
 int main(void)
 {
-    // freopen("data.in", "r", stdin);
-    // Dijkstra 算法例子
+#ifdef __DEBUG__
+	freopen("data.in", "r", stdin);
+#endif
     int N, M;
     cin >> N >> M;
     Graph g(N);
@@ -68,9 +64,10 @@ int main(void)
         int u, v, w;
         cin >> u >> v >> w;
         g.Dijkstra_addedge(u, v, w, 0); // 无向边
+        // g.Dijkstra_addedge(u, v, w, 1); // 有向边
     }
     g.Dijkstra(0);
     for (int i = 0; i < N; i++)
-        cout << i << ": " << g.Dijkstra_ans[i] << endl;
+        cout << i << ": " << g.get_ans(i) << endl;
     return 0;
 }

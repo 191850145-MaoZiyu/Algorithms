@@ -1,13 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-struct Node {
-    int to, cost;
-    Node (int to, int cost)
-    {
-        this->to = to;
-        this->cost = cost;
-    }
-};
+#define Node 	pair<int, int>
+#define cost	first
+#define to		second
 class Graph
 {
     int V;
@@ -20,14 +15,14 @@ public:
         this->V = V;
         edges   = new vector<Node>[V];
         visited = new int[V];
-        DC_dist 	= new int[V];
+        DC_dist = new int[V];
     }
     #define DC_addedge(u, v, w) addedge(u, v, w, true)
     void addedge (int u, int v, int w, bool is_directed)
     {
-        edges[u].push_back(Node(v, w));
+        edges[u].push_back({v, w});
         if (!is_directed)
-            edges[v].push_back(Node(u, w));
+            edges[v].push_back({u, w});
     }
     void add_super_source(void)
     {
@@ -67,7 +62,7 @@ public:
         int ans = 0x7f7f7f7f;
         for (int i = 1; i < V; i++)
             ans = min(ans, DC_dist[i]);
-        return -ans;            // 返回负的 ans
+        return -ans;            // 返回负的最小值
     }
 };
 int main(void)
@@ -90,3 +85,8 @@ int main(void)
     cout << g.DC_ans() << endl;
     return 0;
 }
+/*
+    也可以将所有不等式化为 a - b >= c 的形式，建一条由 b 指向 a，权值为 c 的边
+    然后添加超级源点之后求最长路
+    返回 DC_dist 数组的最大值
+*/
